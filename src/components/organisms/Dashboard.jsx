@@ -12,7 +12,7 @@ import { CATEGORIES } from '../../utils/constants';
 
 import CelebrationModal from '../molecules/CelebrationModal';
 
-const Dashboard = ({ onAddExpense, onViewAll, onEditExpense }) => {
+const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
     const { expenses, loading } = useExpenses();
     const { streakData } = useStreak();
     const [showCelebration, setShowCelebration] = React.useState(false);
@@ -97,7 +97,7 @@ const Dashboard = ({ onAddExpense, onViewAll, onEditExpense }) => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                        Welcome back! 👋
+                        Hello, {username || 'Friend'}!
                     </h1>
                     <p className="text-gray-400 text-sm mt-1">Here's your finance overview</p>
                 </div>

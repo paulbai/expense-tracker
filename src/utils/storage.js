@@ -121,3 +121,23 @@ export const saveStreakData = async (data) => {
         return false;
     }
 }
+
+export const getUserProfile = async () => {
+    try {
+        const data = await window.storage.get(STORAGE_KEYS.USER_PROFILE);
+        return data ? JSON.parse(data.value) : null;
+    } catch (error) {
+        console.error('Error getting user profile:', error);
+        return null;
+    }
+};
+
+export const saveUserProfile = async (profile) => {
+    try {
+        await window.storage.set(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
+        return true;
+    } catch (error) {
+        console.error('Error saving user profile:', error);
+        return false;
+    }
+};

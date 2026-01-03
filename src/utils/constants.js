@@ -12,5 +12,6 @@ export const CATEGORIES = [
 export const STORAGE_KEYS = {
     EXPENSES: 'expenses',
     SETTINGS: 'user_settings',
-    STREAK: 'streak_data'
+    STREAK: 'streak_data',
+    USER_PROFILE: 'phae_user_profile'
 };

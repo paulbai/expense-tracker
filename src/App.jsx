@@ -3,10 +3,13 @@ import Dashboard from './components/organisms/Dashboard';
 import FloatingButton from './components/atoms/FloatingButton';
 import AllExpenses from './pages/AllExpenses';
 import AddExpenseModal from './components/organisms/AddExpenseModal';
+import Onboarding from './pages/Onboarding';
 import { ToastProvider } from './components/atoms/Toast';
+import { useUser } from './hooks/useUser';
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState('dashboard'); // 'dashboard', 'all-expenses'
+  const { user, loading, login } = useUser();
+  const [currentPage, setCurrentPage] = useState('dashboard');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState(null);
 
@@ -20,11 +23,30 @@ function AppContent() {
     setExpenseToEdit(null);
   };
 
+  const handleOnboardingComplete = async (username) => {
+    await login(username);
+  };
+
+  // Show loading state or splash screen while checking user
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#1a1d29] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Show Onboarding if no user
+  if (!user) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
         return (
           <Dashboard
+            username={user.name}
             onAddExpense={() => setIsModalOpen(true)}
             onViewAll={() => setCurrentPage('all-expenses')}
             onEditExpense={handleEditExpense}
@@ -38,7 +60,7 @@ function AppContent() {
           />
         );
       default:
-        return <Dashboard />;
+        return <Dashboard username={user.name} />;
     }
   };
 
