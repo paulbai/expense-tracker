@@ -27,9 +27,9 @@ const PieChartCard = ({ expenses }) => {
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#1a1d29] p-3 rounded-xl border border-white/10 shadow-xl">
-                    <p className="font-medium text-white mb-1">{payload[0].name}</p>
-                    <p className="text-violet-400 font-bold">
+                <div className="bg-bg p-3 rounded-xl border border-white/10 shadow-xl">
+                    <p className="font-medium text-primary mb-1">{payload[0].name}</p>
+                    <p className="text-accent text-lg font-bold">
                         {formatCurrency(payload[0].value)}
                     </p>
                 </div>

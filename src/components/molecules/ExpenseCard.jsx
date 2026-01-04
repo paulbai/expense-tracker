@@ -4,23 +4,23 @@ import { CATEGORIES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/calculations';
 
 const ExpenseCard = ({ expense, onEdit, onDelete }) => {
-    const category = CATEGORIES.find(c => c.id === expense.category) || {};
+    const categoryData = CATEGORIES.find(c => c.id === expense.category) || {};
 
     return (
-        <div className="group bg-[#252936] p-4 rounded-2xl flex items-center justify-between transition-all hover:bg-[#2a2f3e] hover:shadow-lg">
+        <div className="group bg-surface p-4 rounded-2xl flex items-center justify-between transition-all hover:brightness-105 hover:shadow-lg">
             <div className="flex items-center gap-4">
-                {/* Icon */}
-                <div className="w-12 h-12 rounded-2xl bg-[#1a1d29] flex items-center justify-center text-2xl shadow-neumorphic-inset border border-white/5">
-                    {category.icon || '📦'}
+                {/* Icon Container with Neumorphic Inset */}
+                <div className="w-12 h-12 rounded-2xl bg-bg flex items-center justify-center text-2xl shadow-neu-inset border border-white/5">
+                    {categoryData ? categoryData.icon : '📦'}
                 </div>
 
                 {/* Details */}
                 <div className="flex flex-col">
-                    <span className="font-medium text-white text-base">
-                        {category.label || expense.category}
+                    <span className="font-medium text-primary text-base">
+                        {categoryData ? categoryData.label : expense.category}
                     </span>
-                    <span className="text-sm text-gray-400">
-                        {expense.note || expense.date}
+                    <span className="text-xs text-secondary mt-0.5">
+                        {expense.date}
                     </span>
                 </div>
             </div>

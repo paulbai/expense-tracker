@@ -43,14 +43,14 @@ const LineChartCard = ({ expenses }) => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#1a1d29] p-3 rounded-xl border border-white/10 shadow-xl">
-                    <p className="font-medium text-white mb-1">{label}</p>
+                <div className="bg-bg p-3 rounded-xl border border-white/10 shadow-xl">
+                    <p className="font-medium text-primary mb-1">{label}</p>
                     <div className="space-y-1">
-                        <p className="text-violet-400 text-sm">
+                        <p className="text-accent text-sm">
                             Spent: <span className="font-bold">{formatCurrency(payload[0].value)}</span>
                         </p>
                         {payload[1] && (
-                            <p className="text-pink-400 text-sm">
+                            <p className="text-secondary text-sm">
                                 Total: <span className="font-bold">{formatCurrency(payload[1].value)}</span>
                             </p>
                         )}

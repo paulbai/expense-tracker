@@ -14,9 +14,9 @@ const Button = ({
     const baseStyles = 'inline-flex items-center justify-center rounded-2xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d29] disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants = {
-        primary: 'bg-gradient-to-r from-violet-600 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95',
-        secondary: 'bg-[#2d3142] text-white shadow-neumorphic-flat hover:bg-[#353a4e] active:bg-[#252936]',
-        ghost: 'bg-transparent text-gray-400 hover:text-white hover:bg-white/5',
+        primary: 'bg-accent text-white shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95',
+        secondary: 'bg-surface text-primary shadow-neu hover:brightness-110 active:scale-95',
+        ghost: 'bg-transparent text-secondary hover:text-primary hover:bg-primary/5',
         danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg'
     };
 

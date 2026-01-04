@@ -49,11 +49,20 @@ const Toast = ({ message, type, duration, onClose }) => {
         warning: 'border-amber-500/50',
     }
 
+    const colors = {
+        success: 'bg-emerald-600/20',
+        error: 'bg-red-600/20',
+        info: 'bg-blue-600/20',
+        warning: 'bg-amber-600/20',
+    }
+
     return (
-        <div className={`pointer-events-auto flex items-center gap-3 bg-[#252936] text-white px-4 py-3 rounded-xl shadow-xl border ${borders[type]} animate-in slide-in-from-top-2 fade-in duration-300 min-w-[300px]`}>
-            {icons[type]}
-            <p className="text-sm font-medium flex-1">{message}</p>
-            <button onClick={onClose} className="text-gray-400 hover:text-white">
+        <div className={`pointer-events-auto flex items-center gap-3 bg-surface text-primary px-4 py-3 rounded-xl shadow-neu border ${borders[type]} animate-in slide-in-from-top-2 fade-in duration-300 min-w-[300px]`}>
+            <div className={`p-2 rounded-full ${colors[type]}`}>
+                {icons[type]}
+            </div>
+            <p className="flex-1 text-sm font-medium">{message}</p>
+            <button onClick={onClose} className="text-secondary hover:text-primary">
                 <X size={14} />
             </button>
         </div>

@@ -101,7 +101,7 @@ const AddExpenseModal = ({ isOpen, onClose, onSave, expenseToEdit = null }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-md bg-[#252936] rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="w-full max-w-md bg-surface rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
@@ -131,9 +131,9 @@ const AddExpenseModal = ({ isOpen, onClose, onSave, expenseToEdit = null }) => {
                                 onChange={(e) => setAmount(e.target.value)}
                                 placeholder="0.00"
                                 className={`
-                  w-full bg-[#1a1d29] text-white text-3xl font-bold rounded-2xl pl-14 pr-4 py-4
-                  shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5),inset_-2px_-2px_5px_rgba(255,255,255,0.05)]
-                  border border-transparent focus:border-violet-500 focus:ring-1 focus:ring-violet-500
+                  w-full bg-bg text-primary text-3xl font-bold rounded-2xl pl-14 pr-4 py-4
+                  shadow-[inset_2px_2px_5px_var(--shadow-dark),inset_-2px_-2px_5px_var(--shadow-light)]
+                  border border-transparent focus:border-accent focus:ring-1 focus:ring-accent
                   transition-all duration-200 outline-none
                   ${errors.amount ? 'border-red-500 focus:border-red-500' : ''}
                 `}
@@ -153,13 +153,13 @@ const AddExpenseModal = ({ isOpen, onClose, onSave, expenseToEdit = null }) => {
                     {/* Date & Note Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-400 ml-1">Date</label>
+                            <label className="text-sm font-medium text-secondary ml-1">Date</label>
                             <div className="relative">
                                 <input
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="w-full bg-[#1a1d29] text-white rounded-xl px-4 py-3 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5),inset_-2px_-2px_5px_rgba(255,255,255,0.05)] border-transparent focus:border-violet-500 outline-none"
+                                    className="w-full bg-bg text-primary rounded-xl px-4 py-3 shadow-[inset_2px_2px_5px_var(--shadow-dark),inset_-2px_-2px_5px_var(--shadow-light)] border-transparent focus:border-accent outline-none appearance-none"
                                 />
                                 <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={16} />
                             </div>

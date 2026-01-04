@@ -41,10 +41,13 @@ const BarChartCard = ({ expenses }) => {
             <div className="flex flex-col gap-4 h-full overflow-y-auto px-2 custom-scrollbar">
                 {data.map(item => (
                     <div key={item.name} className="space-y-1 group">
-                        <div className="flex justify-between text-sm">
-                            <div className="flex items-center gap-2 text-white group-hover:text-violet-200 transition-colors">
-                                <span>{item.icon}</span>
-                                <span>{item.name}</span>
+                        <div className="bg-bg p-3 rounded-xl border border-white/10 shadow-xl">
+                            <p className="font-medium text-primary mb-1">{item.name}</p>
+                            <div className="flex items-center gap-2 text-primary">
+                                <span className="text-accent text-lg font-bold">
+                                    <span>{item.icon}</span>
+                                    <span>{item.name}</span>
+                                </span>
                             </div>
                             <span className="text-gray-400 font-medium group-hover:text-white transition-colors">
                                 {formatCurrency(item.value)}

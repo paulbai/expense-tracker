@@ -1,3 +1,139 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base Variables & Themes */
+:root {
+    /* Default (Dark) */
+    --bg-color: #1a1d29;
+    --surface-color: #252936;
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af;
+    --accent-color: #8b5cf6;
+    /* Violet */
+
+    /* Neumorphic Shadows (Dark Default) */
+    --shadow-light: rgba(255, 255, 255, 0.05);
+    --shadow-dark: rgba(0, 0, 0, 0.5);
+    --neu-shadow-out: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+    --neu-shadow-in: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light);
+}
+
+/* 1. Light Theme */
+.light {
+    --bg-color: #e0e5ec;
+    --surface-color: #e0e5ec;
+    --text-primary: #4a4a4a;
+    --text-secondary: #878787;
+    --accent-color: #6d5dfc;
+
+    --shadow-light: #ffffff;
+    --shadow-dark: #a3b1c6;
+}
+
+/* 2. Aurora */
+.aurora {
+    --bg-color: #0b1026;
+    --surface-color: #121936;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent-color: #00ff9d;
+    /* Green/Aurora */
+
+    --shadow-light: rgba(255, 255, 255, 0.08);
+    --shadow-dark: rgba(0, 0, 0, 0.6);
+}
+
+/* 3. Ocean */
+.ocean {
+    --bg-color: #0f172a;
+    --surface-color: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --accent-color: #38bdf8;
+    /* Sky Blue */
+
+    --shadow-light: rgba(255, 255, 255, 0.05);
+    --shadow-dark: rgba(0, 0, 0, 0.4);
+}
+
+/* 4. Sunset */
+.sunset {
+    --bg-color: #2a1b1b;
+    --surface-color: #3d2525;
+    --text-primary: #ffedd5;
+    --text-secondary: #fdba74;
+    --accent-color: #fb923c;
+    /* Orange */
+
+    --shadow-light: rgba(255, 255, 255, 0.08);
+    --shadow-dark: rgba(0, 0, 0, 0.6);
+}
+
+/* 5. Electric Bioluminescence */
+.bioluminescence {
+    --bg-color: #020617;
+    --surface-color: #0f172a;
+    --text-primary: #e2e8f0;
+    --text-secondary: #64748b;
+    --accent-color: #22d3ee;
+    /* Cyan */
+
+    --shadow-light: rgba(34, 211, 238, 0.1);
+    /* Glowy */
+    --shadow-dark: rgba(0, 0, 0, 0.8);
+}
+
+/* 6. Deep Teal Naturals */
+.deep_teal {
+    --bg-color: #134e4a;
+    --surface-color: #115e59;
+    --text-primary: #ccfbf1;
+    --text-secondary: #5eead4;
+    --accent-color: #fca5a5;
+    /* Salmon accent? */
+
+    --shadow-light: rgba(255, 255, 255, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.4);
+}
+
+/* 7. Vibrant Retro */
+.retro {
+    --bg-color: #2e0228;
+    /* Deep purple */
+    --surface-color: #4a0440;
+    --text-primary: #fae8ff;
+    --text-secondary: #d946ef;
+    --accent-color: #facc15;
+    /* Yellow */
+
+    --shadow-light: rgba(255, 255, 255, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.5);
+}
+
+/* 8. Neon Neon */
+.neon {
+    --bg-color: #000000;
+    --surface-color: #171717;
+    --text-primary: #ffffff;
+    --text-secondary: #a3a3a3;
+    --accent-color: #bef264;
+    /* Lime */
+
+    --shadow-light: rgba(255, 255, 255, 0.15);
+    --shadow-dark: rgba(255, 255, 255, 0.05);
+    /* Subtle white shadow for depth in black */
+}
+
+/* Global Styles */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input,
+select,
+textarea {
+    color: var(--text-primary);
+}

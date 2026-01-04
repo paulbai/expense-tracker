@@ -4,14 +4,13 @@ import Button from '../atoms/Button';
 const EmptyState = ({ onAddFirst }) => {
     return (
         <div className="flex flex-col items-center justify-center py-16 px-4 text-center space-y-6">
-            <div className="w-32 h-32 bg-[#252936] rounded-full flex items-center justify-center shadow-neumorphic-pressed mb-4">
-                <span className="text-6xl animate-bounce" role="img" aria-label="Rocket">🚀</span>
-            </div>
-
-            <div className="space-y-2 max-w-xs mx-auto">
-                <h3 className="text-2xl font-bold text-white">Start Your Journey</h3>
-                <p className="text-gray-400">
-                    Add your first expense to see your spending dashboard come to life.
+            <div className="flex flex-col items-center justify-center py-12 text-center animate-in fade-in duration-500">
+                <div className="w-32 h-32 bg-surface rounded-full flex items-center justify-center shadow-neu-inset mb-4">
+                    <span className="text-4xl animate-bounce">🌱</span>
+                </div>
+                <h3 className="text-2xl font-bold text-primary">Start Your Journey</h3>
+                <p className="text-secondary mt-2 max-w-xs">
+                    {"Track your first expense to begin building your financial overview."}
                 </p>
             </div>
 
