@@ -148,11 +148,12 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
             ? expenses.map((item) => (item.id === expense.id ? expense : item))
             : [...expenses, expense];
         const dayTotal = calculateDateTotal(nextExpenses, expense.date);
+        const previousStreak = calculateStreak(expenses).currentStreak;
         const streakData = calculateStreak(nextExpenses);
         const action = expenseToEdit ? 'updated' : 'added';
 
         addToast(`Expense ${action}. ${formatExpenseDate(expense.date, settings.dateFormat)} totals ${formatCurrency(dayTotal, settings.currency)}.`, 'success');
-        onExpenseSaved?.({ expense, action, streakData });
+        onExpenseSaved?.({ expense, action, previousStreak, streakData });
         onClose();
     };
 

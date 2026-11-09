@@ -11,10 +11,9 @@ import { useExpenses } from './hooks/useExpenses';
 import { useNotifications } from './hooks/useNotifications';
 import { useSettings } from './hooks/useSettings';
 import { useUser } from './hooks/useUser';
+import { reachedStreakMilestone } from './utils/calculations';
 
 const Insights = lazy(() => import('./pages/Insights'));
-
-const MILESTONES = [7, 14, 30, 60, 90];
 
 function AppContent() {
     const { user, loading: userLoading, error: userError, login, resetUser } = useUser();
@@ -52,8 +51,8 @@ function AppContent() {
         setExpenseToEdit(null);
     };
 
-    const handleExpenseSaved = ({ action, streakData }) => {
-        if (action === 'added' && MILESTONES.includes(streakData.currentStreak)) {
+    const handleExpenseSaved = ({ action, previousStreak, streakData }) => {
+        if (action === 'added' && reachedStreakMilestone(previousStreak, streakData.currentStreak)) {
             setCelebrationStreak(streakData.currentStreak);
         }
     };

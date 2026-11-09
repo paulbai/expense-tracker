@@ -129,12 +129,6 @@ export const saveSettings = async (settings) => {
     return true;
 };
 
-export const getStreakData = async () => read(STORAGE_KEYS.STREAK, {
-    currentStreak: 0,
-    lastLoggedDate: null,
-    longestStreak: 0
-});
-
 export const saveStreakData = async (data) => {
     await write(STORAGE_KEYS.STREAK, data);
     return true;
@@ -163,10 +157,5 @@ export const clearExpenseData = async () => {
         remove(STORAGE_KEYS.EXPENSES),
         remove(STORAGE_KEYS.STREAK)
     ]);
-    return true;
-};
-
-export const clearAllData = async () => {
-    await Promise.all(Object.values(STORAGE_KEYS).map(remove));
     return true;
 };

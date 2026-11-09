@@ -8,6 +8,7 @@ import {
     startOfDay,
     subDays
 } from 'date-fns';
+import { STREAK_MILESTONES } from './constants';
 
 const toValidDate = (value) => {
     const date = value instanceof Date ? value : parseISO(value);
@@ -96,6 +97,15 @@ export const calculateStreak = (expenses, referenceDate = new Date()) => {
         lastLoggedDate: dateKeys.at(-1)
     };
 };
+
+export const reachedStreakMilestone = (previousStreak, currentStreak) => (
+    currentStreak > previousStreak && STREAK_MILESTONES.includes(currentStreak)
+);
+
+export const compareNewestFirst = (first, second) => (
+    second.date.localeCompare(first.date)
+    || String(second.createdAt ?? '').localeCompare(String(first.createdAt ?? ''))
+);
 
 export const formatCurrency = (amount, currency = 'SLE', locale = 'en-SL') => {
     const numericAmount = Number(amount) || 0;

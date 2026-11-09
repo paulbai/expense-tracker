@@ -9,6 +9,10 @@ export const CATEGORIES = [
     { id: 'miscellaneous', label: 'Miscellaneous', icon: '📦', color: '#A8D8EA' }
 ];
 
+export const getCategoryLabel = (id) => CATEGORIES.find((category) => category.id === id)?.label || id;
+
+export const STREAK_MILESTONES = [7, 14, 30, 60, 90];
+
 export const CURRENCIES = [
     { code: 'SLE', label: 'Sierra Leonean leone (SLE)' },
     { code: 'USD', label: 'US dollar (USD)' },

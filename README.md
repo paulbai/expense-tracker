@@ -61,4 +61,4 @@ This app is a static site and can be deployed to Vercel or another static host.
 1.  Run `npm run build`
 2.  Deploy the `dist` folder.
 
-Before publishing, configure the final public URL in your hosting environment if you want social crawlers to receive a canonical Open Graph URL. The app otherwise resolves its social URL from the active site location at runtime.
+Social preview tags in `index.html` point to the production URL, https://expense-tracker-phae.vercel.app. Update them if the domain changes.

@@ -9,9 +9,11 @@ import { useExpenses } from '../../hooks/useExpenses';
 import { useSettings } from '../../hooks/useSettings';
 import { useStreak } from '../../hooks/useStreak';
 import { useToast } from '../atoms/Toast';
+import { getCategoryLabel } from '../../utils/constants';
 import {
     calculateMonthTotal,
     calculateWeeklyTotal,
+    compareNewestFirst,
     formatCurrency,
     getMonthLabel,
     getThisMonthExpensesCount
@@ -36,11 +38,11 @@ const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
     }), [expenses, settings.startOfWeek]);
 
     const recentExpenses = useMemo(() => [...expenses]
-        .sort((first, second) => new Date(second.date) - new Date(first.date))
+        .sort(compareNewestFirst)
         .slice(0, 5), [expenses]);
 
     const handleDelete = async (expense) => {
-        if (!window.confirm(`Delete ${formatCurrency(expense.amount, settings.currency)} for ${expense.category}?`)) return;
+        if (!window.confirm(`Delete ${formatCurrency(expense.amount, settings.currency)} for ${getCategoryLabel(expense.category)}?`)) return;
         const success = await deleteExpense(expense.id);
         addToast(success ? 'Expense deleted.' : 'The expense could not be deleted.', success ? 'success' : 'error');
     };

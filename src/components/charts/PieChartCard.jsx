@@ -40,7 +40,7 @@ const PieChartCard = ({ expenses, currency }) => {
 
     if (data.length === 0) {
         return (
-            <ChartWrapper title="Category Breakdown">
+            <ChartWrapper title="Category Breakdown (all time)">
                 <div className="flex h-full items-center justify-center text-sm text-secondary">
                     No data to display
                 </div>
@@ -49,7 +49,7 @@ const PieChartCard = ({ expenses, currency }) => {
     }
 
     return (
-        <ChartWrapper title="Category Breakdown">
+        <ChartWrapper title="Category Breakdown (all time)">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie

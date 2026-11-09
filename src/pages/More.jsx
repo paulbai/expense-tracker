@@ -106,7 +106,7 @@ const More = ({ notifications, onResetAllData }) => {
                 <div className="settings-card space-y-5">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div><h3 className="font-semibold text-primary">Remind me to log expenses</h3><p className="mt-1 text-sm text-secondary">Phae can send a daily reminder when it is open.</p></div>
-                        <label className="toggle-control"><input type="checkbox" checked={settings.notificationEnabled} onChange={handleNotificationChange} /><span aria-hidden="true" /></label>
+                        <label className="toggle-control"><input type="checkbox" aria-label="Remind me to log expenses" checked={settings.notificationEnabled} onChange={handleNotificationChange} /><span aria-hidden="true" /></label>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
                         <div><label htmlFor="notification-time" className="field-label">Reminder time</label><input id="notification-time" type="time" value={settings.notificationTime} onChange={(event) => updateSettings({ notificationTime: event.target.value })} className="form-control mt-2" /></div>

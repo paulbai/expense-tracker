@@ -4,7 +4,9 @@ import {
     calculateMonthTotal,
     calculateStreak,
     calculateWeeklyTotal,
-    formatCurrency
+    compareNewestFirst,
+    formatCurrency,
+    reachedStreakMilestone
 } from './calculations';
 
 const expense = (id, date, amount, category = 'food') => ({
@@ -50,5 +52,21 @@ describe('spending calculations', () => {
     it('formats amounts using the chosen currency', () => {
         expect(formatCurrency(1250.5, 'USD')).toMatch(/1,250\.50/);
         expect(formatCurrency(1250.5, 'SLE')).toContain('1,250.50');
+    });
+
+    it('celebrates a milestone only when the streak reaches it', () => {
+        expect(reachedStreakMilestone(6, 7)).toBe(true);
+        expect(reachedStreakMilestone(7, 7)).toBe(false);
+        expect(reachedStreakMilestone(7, 8)).toBe(false);
+    });
+
+    it('orders same-day expenses by when they were added', () => {
+        const sorted = [
+            { id: 'older-day', date: '2026-01-07', createdAt: '2026-01-07T09:00:00.000Z' },
+            { id: 'first-today', date: '2026-01-08', createdAt: '2026-01-08T09:00:00.000Z' },
+            { id: 'latest-today', date: '2026-01-08', createdAt: '2026-01-08T18:00:00.000Z' }
+        ].sort(compareNewestFirst);
+
+        expect(sorted.map((item) => item.id)).toEqual(['latest-today', 'first-today', 'older-day']);
     });
 });

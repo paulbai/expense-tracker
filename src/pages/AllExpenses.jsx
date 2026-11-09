@@ -5,7 +5,8 @@ import ExpenseCard from '../components/molecules/ExpenseCard';
 import { useToast } from '../components/atoms/Toast';
 import { useExpenses } from '../hooks/useExpenses';
 import { useSettings } from '../hooks/useSettings';
-import { CATEGORIES } from '../utils/constants';
+import { compareNewestFirst } from '../utils/calculations';
+import { CATEGORIES, getCategoryLabel } from '../utils/constants';
 
 const dateRangeOptions = [
     { value: 'all', label: 'All time' },
@@ -69,8 +70,8 @@ const AllExpenses = ({ onBack, onEditExpense }) => {
                 return matchesSearch && matchesCategory && matchesDate;
             })
             .sort((first, second) => {
-                if (sortBy === 'date-desc') return new Date(second.date) - new Date(first.date);
-                if (sortBy === 'date-asc') return new Date(first.date) - new Date(second.date);
+                if (sortBy === 'date-desc') return compareNewestFirst(first, second);
+                if (sortBy === 'date-asc') return compareNewestFirst(second, first);
                 if (sortBy === 'amount-desc') return Number(second.amount) - Number(first.amount);
                 if (sortBy === 'amount-asc') return Number(first.amount) - Number(second.amount);
                 if (sortBy === 'category-asc') {
@@ -89,7 +90,7 @@ const AllExpenses = ({ onBack, onEditExpense }) => {
     };
 
     const handleDelete = async (expense) => {
-        if (!window.confirm(`Delete this ${expense.category} expense? This cannot be undone.`)) return;
+        if (!window.confirm(`Delete this ${getCategoryLabel(expense.category)} expense? This cannot be undone.`)) return;
         const success = await deleteExpense(expense.id);
         addToast(success ? 'Expense deleted.' : 'The expense could not be deleted.', success ? 'success' : 'error');
     };

@@ -37,7 +37,7 @@ const BarChartCard = ({ expenses, currency }) => {
     const maxValue = data.length > 0 ? data[0].value : 0;
 
     return (
-        <ChartWrapper title="Top Categories">
+        <ChartWrapper title="Top Categories (all time)">
             <div className="flex h-full flex-col gap-4 overflow-y-auto px-2">
                 {data.map(item => (
                     <div key={item.name} className="space-y-1 group">

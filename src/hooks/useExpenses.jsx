@@ -78,33 +78,21 @@ export const ExpensesProvider = ({ children }) => {
     }, []);
 
     const addExpense = useCallback(async (expense) => {
-        const validationMessage = validateExpense(expense);
-        if (validationMessage) {
-            setError(validationMessage);
-            return false;
-        }
-        if (expenses.some((item) => item.id === expense.id)) {
-            setError('That expense was already saved.');
+        // After a failed load the list is empty, so saving would erase the unread data.
+        if (error || validateExpense(expense) || expenses.some((item) => item.id === expense.id)) {
             return false;
         }
 
         try {
             await commitExpenses([...expenses, { ...expense, amount: Number(expense.amount) }]);
             return true;
-        } catch (caughtError) {
-            setError(caughtError.message || 'The expense could not be saved.');
+        } catch {
             return false;
         }
-    }, [commitExpenses, expenses]);
+    }, [commitExpenses, error, expenses]);
 
     const updateExpense = useCallback(async (expense) => {
-        const validationMessage = validateExpense(expense);
-        if (validationMessage) {
-            setError(validationMessage);
-            return false;
-        }
-        if (!expenses.some((item) => item.id === expense.id)) {
-            setError('This expense no longer exists.');
+        if (validateExpense(expense) || !expenses.some((item) => item.id === expense.id)) {
             return false;
         }
 
@@ -113,23 +101,20 @@ export const ExpensesProvider = ({ children }) => {
                 item.id === expense.id ? { ...expense, amount: Number(expense.amount) } : item
             )));
             return true;
-        } catch (caughtError) {
-            setError(caughtError.message || 'The expense could not be updated.');
+        } catch {
             return false;
         }
     }, [commitExpenses, expenses]);
 
     const deleteExpense = useCallback(async (id) => {
         if (!expenses.some((item) => item.id === id)) {
-            setError('This expense no longer exists.');
             return false;
         }
 
         try {
             await commitExpenses(expenses.filter((item) => item.id !== id));
             return true;
-        } catch (caughtError) {
-            setError(caughtError.message || 'The expense could not be deleted.');
+        } catch {
             return false;
         }
     }, [commitExpenses, expenses]);
@@ -138,8 +123,7 @@ export const ExpensesProvider = ({ children }) => {
         try {
             await commitExpenses([]);
             return true;
-        } catch (caughtError) {
-            setError(caughtError.message || 'Expenses could not be cleared.');
+        } catch {
             return false;
         }
     }, [commitExpenses]);
@@ -152,8 +136,7 @@ export const ExpensesProvider = ({ children }) => {
         updateExpense,
         deleteExpense,
         clearExpenses,
-        refreshExpenses,
-        clearError: () => setError(null)
+        refreshExpenses
     }), [addExpense, clearExpenses, deleteExpense, error, expenses, loading, refreshExpenses, updateExpense]);
 
     return <ExpensesContext.Provider value={value}>{children}</ExpensesContext.Provider>;
