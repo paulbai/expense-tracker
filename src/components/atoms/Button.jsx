@@ -11,7 +11,7 @@ const Button = ({
     'aria-label': ariaLabel,
     ...props
 }) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-2xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1d29] disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'inline-flex items-center justify-center rounded-2xl font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-50';
 
     const variants = {
         primary: 'bg-accent text-white shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95',

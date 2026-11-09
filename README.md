@@ -1,20 +1,22 @@
-# Phae - Expense Tracker
+# Phae — Expense Tracker
 
 A modern, local-first expense tracker built with React, Tailwind CSS, and Recharts. Designed to help you track spending habits, visualize categories, and maintain financial streaks without selling your data.
 
 ## Features
 
--   **Dashboard**: Overview of monthly spending, weekly breakdown, and current streak.
--   **Add Expense**: Quick entry modal with amount, category selection, date picker, and notes.
+-   **Dashboard**: Overview of monthly spending, weekly breakdown, current streak, and recent expenses.
+-   **Add Expense**: Accessible quick-entry modal with amount, category, date shortcuts, and notes.
 -   **Visualizations**:
     -   Category Breakdown (Pie Chart)
     -   Top Spending Categories (Bar Chart)
     -   Monthly Trend (Area Chart)
--   **Expense Management**: View all expenses with filtering, sorting, and search. Edit or delete entries.
--   **Streaks & Engagement**: Track consecutive days of logging expenses.
--   **Local First**: All data is stored in your browser's LocalStorage. No account required, no server tracking.
--   **Responsive Design**: Works on desktop, tablet, and mobile.
--   **Dark Mode**: Sleek dark interface.
+-   **Expense Management**: Search, multi-category filter, date ranges, sorting, edit, and delete entries.
+-   **Preferences**: Select a default currency, date format, start of week, and one of nine themes.
+-   **Data Control**: Export a CSV or reset Phae directly from Settings.
+-   **Streaks & Engagement**: Accurate consecutive-day streaks derived from expense history.
+-   **Local First**: All data is stored in browser storage. No account, remote storage, or analytics.
+-   **Reminders**: Optional browser reminders while Phae is open; use the Settings test button to confirm browser permission.
+-   **Responsive Design**: Works on desktop, tablet, and mobile with keyboard-accessible controls.
 
 ## Tech Stack
 
@@ -39,6 +41,11 @@ A modern, local-first expense tracker built with React, Tailwind CSS, and Rechar
     ```bash
     npm run build
     ```
+5.  **Run checks**:
+    ```bash
+    npm run lint
+    npm test
+    ```
 
 ## Project Structure
 
@@ -49,7 +56,9 @@ A modern, local-first expense tracker built with React, Tailwind CSS, and Rechar
 
 ## Deployment
 
-This app is a static site and can be deployed easily to Vercel, Netlify, or GitHub Pages.
+This app is a static site and can be deployed to Vercel or another static host.
 
 1.  Run `npm run build`
 2.  Deploy the `dist` folder.
+
+Before publishing, configure the final public URL in your hosting environment if you want social crawlers to receive a canonical Open Graph URL. The app otherwise resolves its social URL from the active site location at runtime.

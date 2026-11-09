@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Phae expense tracker</title>
+  <desc id="description">A private and local-first expense tracker</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171b32"/>
+      <stop offset="0.55" stop-color="#352464"/>
+      <stop offset="1" stop-color="#8f326d"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#f472b6"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="45"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <circle cx="1090" cy="54" r="190" fill="#f9a8d4" opacity=".2" filter="url(#blur)"/>
+  <circle cx="90" cy="610" r="240" fill="#a78bfa" opacity=".22" filter="url(#blur)"/>
+  <rect x="92" y="80" width="86" height="86" rx="24" fill="url(#accent)"/>
+  <path d="M119 130c14-28 39-28 46 0 7 28 32 28 46 0" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="10"/>
+  <text x="206" y="137" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700">Phae</text>
+  <text x="96" y="311" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700" letter-spacing="-3">Spend with clarity.</text>
+  <text x="100" y="382" fill="#e9d5ff" font-family="Arial, Helvetica, sans-serif" font-size="35">Your private, local-first expense tracker.</text>
+  <rect x="96" y="458" width="514" height="78" rx="39" fill="#ffffff" fill-opacity=".13" stroke="#ffffff" stroke-opacity=".26"/>
+  <text x="134" y="509" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">Your data stays on your device</text>
+  <rect x="845" y="263" width="235" height="180" rx="30" fill="#171b32" fill-opacity=".6" stroke="#ffffff" stroke-opacity=".18"/>
+  <text x="878" y="316" fill="#d8b4fe" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600">This month</text>
+  <text x="878" y="375" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700">$1,240</text>
+  <path d="M878 405h36l19-35 27 20 42-63 46 24" fill="none" stroke="url(#accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+</svg>

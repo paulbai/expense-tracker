@@ -1,205 +1,130 @@
-import React, { useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
+import { Plus } from 'lucide-react';
 import StatCard from '../molecules/StatCard';
 import EmptyState from '../molecules/EmptyState';
+import ExpenseCard from '../molecules/ExpenseCard';
 import Skeleton from '../atoms/Skeleton';
-import PieChartCard from '../charts/PieChartCard';
-import BarChartCard from '../charts/BarChartCard';
-import LineChartCard from '../charts/LineChartCard';
+import Button from '../atoms/Button';
 import { useExpenses } from '../../hooks/useExpenses';
+import { useSettings } from '../../hooks/useSettings';
 import { useStreak } from '../../hooks/useStreak';
-import { calculateMonthTotal, getThisMonthExpensesCount, formatCurrency, calculateWeeklyTotal } from '../../utils/calculations';
-import { CATEGORIES } from '../../utils/constants';
+import { useToast } from '../atoms/Toast';
+import {
+    calculateMonthTotal,
+    calculateWeeklyTotal,
+    formatCurrency,
+    getMonthLabel,
+    getThisMonthExpensesCount
+} from '../../utils/calculations';
 
-import CelebrationModal from '../molecules/CelebrationModal';
+const PieChartCard = lazy(() => import('../charts/PieChartCard'));
+const BarChartCard = lazy(() => import('../charts/BarChartCard'));
+const LineChartCard = lazy(() => import('../charts/LineChartCard'));
+
+const ChartsLoading = ({ className = '' }) => <div className={`h-[400px] rounded-[24px] border border-border bg-surface ${className}`} aria-label="Loading chart" />;
 
 const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
-    const { expenses, loading } = useExpenses();
+    const { expenses, loading, error, deleteExpense, refreshExpenses } = useExpenses();
+    const { settings } = useSettings();
     const { streakData } = useStreak();
-    const [showCelebration, setShowCelebration] = React.useState(false);
+    const { addToast } = useToast();
 
-    // Simple milestone check effect (mimic)
-    // Real implementation: useStreak updates `streakData` and perhaps returns a `milestoneReached` flag
-    // For now, we'll check if just mounted/updated and have a milestone streak
-    React.useEffect(() => {
-        if (streakData.currentStreak > 0 && [3, 7, 30, 100].includes(streakData.currentStreak)) {
-            // In a real app we'd track "seen" state to avoid showing on every reload
-            // setShowCelebration(true); 
-        }
-    }, [streakData.currentStreak]);
+    const metrics = useMemo(() => ({
+        monthTotal: calculateMonthTotal(expenses),
+        weekTotal: calculateWeeklyTotal(expenses, settings.startOfWeek === 'sunday' ? 0 : 1),
+        count: getThisMonthExpensesCount(expenses)
+    }), [expenses, settings.startOfWeek]);
 
-    const metrics = useMemo(() => {
-        if (!expenses || expenses.length === 0) {
-            return {
-                monthTotal: 0,
-                weekTotal: 0,
-                count: 0
-            };
-        }
+    const recentExpenses = useMemo(() => [...expenses]
+        .sort((first, second) => new Date(second.date) - new Date(first.date))
+        .slice(0, 5), [expenses]);
 
-        const monthTotal = calculateMonthTotal(expenses);
-        const weekTotal = calculateWeeklyTotal(expenses);
-        const count = getThisMonthExpensesCount(expenses);
-
-        return {
-            monthTotal,
-            weekTotal,
-            count
-        };
-    }, [expenses]);
+    const handleDelete = async (expense) => {
+        if (!window.confirm(`Delete ${formatCurrency(expense.amount, settings.currency)} for ${expense.category}?`)) return;
+        const success = await deleteExpense(expense.id);
+        addToast(success ? 'Expense deleted.' : 'The expense could not be deleted.', success ? 'success' : 'error');
+    };
 
     if (loading) {
         return (
-            <div className="space-y-6 pb-24 animate-in fade-in duration-500">
-                {/* Header Skeleton */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <Skeleton className="h-8 w-48 mb-2" />
-                        <Skeleton className="h-4 w-32" />
-                    </div>
-                    <Skeleton variant="circular" width={48} height={48} />
-                </div>
-
-                {/* Metrics Skeleton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-surface p-6 rounded-[32px] border border-white/5 h-32 flex flex-col justify-between">
-                            <Skeleton className="h-4 w-24" />
-                            <Skeleton className="h-8 w-32" />
-                        </div>
-                    ))}
-                </div>
-
-                {/* Charts Skeleton */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="bg-surface p-6 rounded-[32px] h-80 border border-white/5">
-                        <Skeleton className="h-6 w-32 mb-6" />
-                        <div className="flex items-center justify-center h-56">
-                            <Skeleton variant="circular" width={180} height={180} />
-                        </div>
-                    </div>
-                    <div className="bg-surface p-6 rounded-[32px] h-80 border border-white/5">
-                        <Skeleton className="h-6 w-32 mb-6" />
-                        <div className="space-y-4 pt-4">
-                            {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-8 w-full" />)}
-                        </div>
-                    </div>
-                </div>
+            <div className="space-y-6 pb-28" aria-busy="true" aria-label="Loading dashboard">
+                <div className="flex items-center justify-between"><div><Skeleton className="mb-2 h-8 w-48" /><Skeleton className="h-4 w-32" /></div><Skeleton variant="circular" width={48} height={48} /></div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1, 2, 3, 4].map((item) => <Skeleton key={item} variant="rectangular" className="h-32" />)}</div>
+                <Skeleton variant="rectangular" className="h-96" />
             </div>
         );
     }
 
-    // Removed EmptyState return - Dashboard will render with zero states
-
+    if (error) {
+        return (
+            <section className="empty-panel" role="alert">
+                <h1 className="text-2xl font-bold text-primary">Your expenses need attention</h1>
+                <p className="mt-2 max-w-md text-secondary">{error} Your saved data has not been overwritten.</p>
+                <Button className="mt-6" onClick={refreshExpenses}>Try again</Button>
+            </section>
+        );
+    }
 
     return (
-        <div className="space-y-6 pb-24 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                        Hello, {username || 'Friend'}!
-                    </h1>
-                    <p className="text-gray-400 text-sm mt-1">Here's your finance overview</p>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 p-[1px] shadow-lg shadow-violet-500/20">
-                    <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center overflow-hidden">
-                        <img src="/logo.png" alt="Phae" className="w-full h-full object-cover" />
+        <div className="space-y-6 pb-28">
+            <header className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <img src="/logo.png" width="48" height="48" alt="Phae" className="h-12 w-12 rounded-xl border border-border object-cover" />
+                    <div>
+                        <p className="text-sm text-secondary">{getMonthLabel()}</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-primary">Hello, {username || 'there'}</h1>
                     </div>
                 </div>
-            </div>
+                <Button onClick={onAddExpense} className="min-h-11 gap-2">
+                    <Plus size={18} aria-hidden="true" />
+                    Add expense
+                </Button>
+            </header>
 
-            {/* Main Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Total Balance / Month Total */}
-                <div className="md:col-span-2 relative overflow-hidden bg-gradient-to-br from-violet-600 to-pink-600 rounded-[24px] p-6 text-white shadow-lg shadow-violet-500/20">
-                    <div className="relative z-10">
-                        <span className="text-white/80 text-sm font-medium">This Month's Spending</span>
-                        <div className="text-4xl font-bold mt-2 mb-1">
-                            {formatCurrency(metrics.monthTotal)}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-white/90">
-                            <span className="bg-white/20 px-2 py-0.5 rounded-lg backdrop-blur-sm">
-                                {metrics.count} transactions
-                            </span>
-                        </div>
-                    </div>
-                    {/* Decor circles */}
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                    <div className="absolute bottom-0 right-0 w-32 h-32 bg-black/10 rounded-full blur-xl"></div>
-                </div>
+            {expenses.length === 0 ? (
+                <EmptyState onAddFirst={onAddExpense} />
+            ) : (
+                <>
+                    <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Spending summary">
+                        <article className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-violet-600 to-pink-600 p-6 text-white shadow-lg shadow-violet-950/30 md:col-span-2">
+                            <p className="text-sm font-medium text-white/85">This month’s spending</p>
+                            <p className="mt-2 text-4xl font-bold tracking-tight tabular-nums">{formatCurrency(metrics.monthTotal, settings.currency)}</p>
+                            <p className="mt-2 text-sm text-white/90">{metrics.count} {metrics.count === 1 ? 'expense' : 'expenses'} logged</p>
+                            <div className="pointer-events-none absolute -right-8 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+                        </article>
+                        <StatCard label="Current streak" value={<><span>{streakData.currentStreak} {streakData.currentStreak === 1 ? 'day' : 'days'}</span><span aria-hidden="true" className="ml-2 text-2xl">🔥</span></>} />
+                        <StatCard label="This week" value={formatCurrency(metrics.weekTotal, settings.currency)} icon="📅" />
+                    </section>
 
-                {/* Streak Card */}
-                <StatCard
-                    label="Current Streak"
-                    value={
-                        <div className="flex items-center gap-2">
-                            <span>{streakData.currentStreak} days</span>
-                            <span className="text-2xl animate-pulse">🔥</span>
-                        </div>
-                    }
-                />
+                    <section aria-label="Spending charts" className="grid gap-6 md:grid-cols-2">
+                        <Suspense fallback={<ChartsLoading />}><PieChartCard expenses={expenses} currency={settings.currency} /></Suspense>
+                        <Suspense fallback={<ChartsLoading />}><BarChartCard expenses={expenses} currency={settings.currency} /></Suspense>
+                    </section>
+                    <Suspense fallback={<ChartsLoading />}><LineChartCard expenses={expenses} currency={settings.currency} /></Suspense>
 
-                {/* Weekly Total */}
-                <StatCard
-                    label="This Week"
-                    value={formatCurrency(metrics.weekTotal)}
-                    icon="📅"
-                />
-            </div>
-
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-auto md:h-[400px]">
-                <PieChartCard expenses={expenses} />
-                <BarChartCard expenses={expenses} />
-            </div>
-
-            <div className="h-[400px]">
-                <LineChartCard expenses={expenses} />
-            </div>
-
-            {/* Recent Expenses List Placeholder (Phase 5) */}
-            <div>
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-white">Recent Expenses</h3>
-                    <button
-                        onClick={onViewAll}
-                        className="text-violet-400 text-sm hover:text-violet-300 transition-colors"
-                    >
-                        View All
-                    </button>
-                </div>
-                <div className="space-y-3">
-                    {expenses.slice(0, 5).map(expense => {
-                        const category = CATEGORIES.find(c => c.id === expense.category);
-                        return (
-                            <div
-                                key={expense.id}
-                                className="bg-surface p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:brightness-105 transition-all group"
-                                onClick={() => onEditExpense(expense)}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-bg flex items-center justify-center text-xl shadow-neu-inset border border-white/5">
-                                        {category ? category.icon : '📦'}
-                                    </div>
-                                    <div>
-                                        <div className="font-medium text-primary">{category ? category.label : expense.category}</div>
-                                        <div className="text-xs text-secondary">{expense.date}</div>
-                                    </div>
-                                </div>
-                                <div className="font-bold text-primary">
-                                    {formatCurrency(expense.amount)}
-                                </div>
+                    <section aria-labelledby="recent-expenses-heading">
+                        <div className="mb-4 flex items-center justify-between gap-4">
+                            <div>
+                                <h2 id="recent-expenses-heading" className="text-xl font-bold text-primary">Recent expenses</h2>
+                                <p className="mt-1 text-sm text-secondary">Your five latest entries</p>
                             </div>
-                        );
-                    })}
-                </div>
-            </div>
-
-            <CelebrationModal
-                isOpen={showCelebration}
-                onClose={() => setShowCelebration(false)}
-                streak={streakData.currentStreak}
-            />
+                            <button type="button" onClick={onViewAll} className="text-button">View all expenses</button>
+                        </div>
+                        <div className="space-y-3">
+                            {recentExpenses.map((expense) => (
+                                <ExpenseCard
+                                    key={expense.id}
+                                    expense={expense}
+                                    currency={settings.currency}
+                                    dateFormat={settings.dateFormat}
+                                    onEdit={onEditExpense}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                </>
+            )}
         </div>
     );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { X, Check, Info, AlertTriangle } from 'lucide-react';
 
@@ -18,7 +19,7 @@ export const ToastProvider = ({ children }) => {
     return (
         <ToastContext.Provider value={{ addToast }}>
             {children}
-            <div className="fixed top-4 right-4 z-[70] flex flex-col gap-2 pointer-events-none">
+            <div className="pointer-events-none fixed right-4 top-4 z-[70] flex flex-col gap-2" aria-live="polite" aria-atomic="true">
                 {toasts.map(toast => (
                     <Toast key={toast.id} {...toast} onClose={() => removeToast(toast.id)} />
                 ))}
@@ -57,13 +58,13 @@ const Toast = ({ message, type, duration, onClose }) => {
     }
 
     return (
-        <div className={`pointer-events-auto flex items-center gap-3 bg-surface text-primary px-4 py-3 rounded-xl shadow-neu border ${borders[type]} animate-in slide-in-from-top-2 fade-in duration-300 min-w-[300px]`}>
+        <div className={`pointer-events-auto flex min-w-[280px] items-center gap-3 rounded-xl border bg-surface px-4 py-3 text-primary shadow-neu ${borders[type]}`}>
             <div className={`p-2 rounded-full ${colors[type]}`}>
                 {icons[type]}
             </div>
             <p className="flex-1 text-sm font-medium">{message}</p>
-            <button onClick={onClose} className="text-secondary hover:text-primary">
-                <X size={14} />
+            <button type="button" onClick={onClose} className="icon-button h-8 w-8 p-1" aria-label="Dismiss notification">
+                <X size={14} aria-hidden="true" />
             </button>
         </div>
     );

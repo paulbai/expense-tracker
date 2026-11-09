@@ -3,7 +3,7 @@ import ChartWrapper from './ChartWrapper';
 import { CATEGORIES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/calculations';
 
-const BarChartCard = ({ expenses }) => {
+const BarChartCard = ({ expenses, currency }) => {
     const data = useMemo(() => {
         const categoryTotals = expenses.reduce((acc, expense) => {
             acc[expense.category] = (acc[expense.category] || 0) + Number(expense.amount);
@@ -27,7 +27,7 @@ const BarChartCard = ({ expenses }) => {
     if (data.length === 0) {
         return (
             <ChartWrapper title="Top Spending">
-                <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                <div className="flex h-full items-center justify-center text-sm text-secondary">
                     No data to display
                 </div>
             </ChartWrapper>
@@ -38,24 +38,21 @@ const BarChartCard = ({ expenses }) => {
 
     return (
         <ChartWrapper title="Top Categories">
-            <div className="flex flex-col gap-4 h-full overflow-y-auto px-2 custom-scrollbar">
+            <div className="flex h-full flex-col gap-4 overflow-y-auto px-2">
                 {data.map(item => (
                     <div key={item.name} className="space-y-1 group">
-                        <div className="bg-bg p-3 rounded-xl border border-white/10 shadow-xl">
-                            <p className="font-medium text-primary mb-1">{item.name}</p>
+                        <div className="rounded-xl border border-border bg-bg p-3 shadow-neu-inset">
                             <div className="flex items-center gap-2 text-primary">
-                                <span className="text-accent text-lg font-bold">
-                                    <span>{item.icon}</span>
-                                    <span>{item.name}</span>
-                                </span>
+                                <span aria-hidden="true">{item.icon}</span>
+                                <p className="font-medium">{item.name}</p>
                             </div>
-                            <span className="text-gray-400 font-medium group-hover:text-white transition-colors">
-                                {formatCurrency(item.value)}
+                            <span className="mt-1 block font-semibold text-secondary">
+                                {formatCurrency(item.value, currency)}
                             </span>
                         </div>
-                        <div className="w-full bg-[#1a1d29] rounded-full h-2 overflow-hidden shadow-inner">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-bg shadow-inner">
                             <div
-                                className="h-full rounded-full transition-all duration-1000 ease-out group-hover:brightness-110"
+                                className="h-full rounded-full transition-[width,filter] duration-700 ease-out group-hover:brightness-110"
                                 style={{
                                     width: `${(item.value / maxValue) * 100}%`,
                                     backgroundColor: item.color

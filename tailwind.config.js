@@ -9,9 +9,11 @@ export default {
       colors: {
         bg: 'var(--bg-color)',
         surface: 'var(--surface-color)',
+        elevated: 'var(--elevated-color)',
         primary: 'var(--text-primary)',
         secondary: 'var(--text-secondary)',
         accent: 'var(--accent-color)',
+        border: 'var(--border-color)',
       },
       boxShadow: {
         'neu': 'var(--neu-shadow-out)',

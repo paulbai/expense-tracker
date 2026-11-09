@@ -3,8 +3,8 @@ import { CATEGORIES } from '../../utils/constants';
 
 const CategorySelector = ({ selectedCategory, onSelect, error }) => {
     return (
-        <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-400 ml-1">Category</label>
+        <fieldset className="space-y-2">
+            <legend className="field-label">Category</legend>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {CATEGORIES.map((cat) => (
                     <button
@@ -12,21 +12,21 @@ const CategorySelector = ({ selectedCategory, onSelect, error }) => {
                         type="button"
                         onClick={() => onSelect(cat.id)}
                         className={`
-                            flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-200
-                            border-2 group
+                            flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border-2 p-3 transition-[background-color,border-color,color,transform,box-shadow] duration-200
                             ${selectedCategory === cat.id
-                                ? 'bg-accent text-white border-accent shadow-lg scale-105'
-                                : 'bg-bg text-secondary border-transparent hover:bg-surface hover:border-white/5'
+                                ? 'bg-accent text-white border-accent shadow-lg scale-[1.02]'
+                                : 'bg-bg text-secondary border-transparent hover:bg-elevated hover:border-border'
                             }
                         `}
+                        aria-pressed={selectedCategory === cat.id}
                     >
                         <span className="text-2xl">{cat.icon}</span>
                         <span className="text-xs font-medium">{cat.label}</span>
                     </button>
                 ))}
             </div>
-            {error && <span className="text-xs text-red-500 ml-1">{error}</span>}
-        </div>
+            {error && <span className="field-error" role="alert">{error}</span>}
+        </fieldset>
     );
 };
 

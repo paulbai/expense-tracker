@@ -1,10 +1,27 @@
 import React, { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from 'date-fns';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import ChartWrapper from './ChartWrapper';
 import { formatCurrency } from '../../utils/calculations';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
-const LineChartCard = ({ expenses }) => {
+const TrendTooltip = ({ active, payload, label, currency }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="chart-tooltip">
+                <p className="mb-1 font-medium text-primary">{label}</p>
+                <div className="space-y-1 text-sm">
+                    <p className="text-accent">Spent: <span className="font-bold">{formatCurrency(payload[0].value, currency)}</span></p>
+                    {payload[1] && <p className="text-secondary">Total: <span className="font-bold">{formatCurrency(payload[1].value, currency)}</span></p>}
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
+const LineChartCard = ({ expenses, currency }) => {
+    const reducedMotion = useReducedMotion();
     const data = useMemo(() => {
         if (expenses.length === 0) return [];
 
@@ -40,31 +57,10 @@ const LineChartCard = ({ expenses }) => {
         });
     }, [expenses]);
 
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-bg p-3 rounded-xl border border-white/10 shadow-xl">
-                    <p className="font-medium text-primary mb-1">{label}</p>
-                    <div className="space-y-1">
-                        <p className="text-accent text-sm">
-                            Spent: <span className="font-bold">{formatCurrency(payload[0].value)}</span>
-                        </p>
-                        {payload[1] && (
-                            <p className="text-secondary text-sm">
-                                Total: <span className="font-bold">{formatCurrency(payload[1].value)}</span>
-                            </p>
-                        )}
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
-
     if (data.length === 0) {
         return (
             <ChartWrapper title="Monthly Trend">
-                <div className="flex items-center justify-center h-full text-gray-500 text-sm">
+                <div className="flex h-full items-center justify-center text-sm text-secondary">
                     No data to display
                 </div>
             </ChartWrapper>
@@ -85,24 +81,24 @@ const LineChartCard = ({ expenses }) => {
                             <stop offset="95%" stopColor="#EC4899" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
                     <XAxis
                         dataKey="date"
-                        stroke="#6b7280"
+                        stroke="var(--text-secondary)"
                         tick={{ fontSize: 12 }}
                         tickLine={false}
                         axisLine={false}
                         minTickGap={30}
                     />
                     <YAxis
-                        stroke="#6b7280"
+                        stroke="var(--text-secondary)"
                         tick={{ fontSize: 12 }}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => formatCurrency(value, currency).replace(/[^\d.,\s-]/g, '')}
                         width={60}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip content={<TrendTooltip currency={currency} />} isAnimationActive={!reducedMotion} />
                     <Area
                         type="monotone"
                         dataKey="amount"
@@ -110,6 +106,7 @@ const LineChartCard = ({ expenses }) => {
                         fillOpacity={1}
                         fill="url(#colorAmount)"
                         strokeWidth={2}
+                        isAnimationActive={!reducedMotion}
                     />
                     <Area
                         type="monotone"
@@ -118,6 +115,7 @@ const LineChartCard = ({ expenses }) => {
                         fillOpacity={1}
                         fill="url(#colorCumulative)"
                         strokeWidth={2}
+                        isAnimationActive={!reducedMotion}
                     />
                 </AreaChart>
             </ResponsiveContainer>

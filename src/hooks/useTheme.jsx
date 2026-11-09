@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { STORAGE_KEYS } from '../utils/constants';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useMemo } from 'react';
+import { useSettings } from './useSettings';
 
-const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
 export const THEMES = [
     { id: 'dark', label: 'Dark' },
@@ -9,62 +10,36 @@ export const THEMES = [
     { id: 'aurora', label: 'Aurora' },
     { id: 'ocean', label: 'Ocean' },
     { id: 'sunset', label: 'Sunset' },
-    { id: 'bioluminescence', label: 'Electric Bioluminescence' },
-    { id: 'deep_teal', label: 'Deep Teal Naturals' },
-    { id: 'retro', label: 'Vibrant Retro' },
-    { id: 'neon', label: 'Neon Neon' }
+    { id: 'bioluminescence', label: 'Electric bioluminescence' },
+    { id: 'deep_teal', label: 'Deep teal naturals' },
+    { id: 'retro', label: 'Vibrant retro' },
+    { id: 'neon', label: 'Neon' }
 ];
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState('dark');
+    const { settings, updateSettings } = useSettings();
+    const theme = settings.theme || 'dark';
 
-    // Load theme from storage on mount
-    useEffect(() => {
-        const loadTheme = async () => {
-            if (typeof window !== 'undefined' && window.storage) {
-                try {
-                    const savedSettings = await window.storage.get(STORAGE_KEYS.SETTINGS);
-                    if (savedSettings && savedSettings.value) {
-                        const parsed = JSON.parse(savedSettings.value);
-                        if (parsed.theme) setTheme(parsed.theme);
-                    }
-                } catch (e) {
-                    console.error("Failed to load theme", e);
-                }
-            }
-        };
-        loadTheme();
-    }, []);
-
-    // Apply theme to document
     useEffect(() => {
         const root = window.document.documentElement;
-        // Remove all previous theme classes
-        THEMES.forEach(t => root.classList.remove(t.id));
-        // Add new theme class
+        THEMES.forEach((item) => root.classList.remove(item.id));
         root.classList.add(theme);
+        root.style.colorScheme = theme === 'light' ? 'light' : 'dark';
     }, [theme]);
 
-    const changeTheme = async (newTheme) => {
-        setTheme(newTheme);
-        // Persist to settings
-        if (typeof window !== 'undefined' && window.storage) {
-            try {
-                const savedSettings = await window.storage.get(STORAGE_KEYS.SETTINGS);
-                let currentSettings = savedSettings && savedSettings.value ? JSON.parse(savedSettings.value) : {};
-                currentSettings.theme = newTheme;
-                await window.storage.set(STORAGE_KEYS.SETTINGS, JSON.stringify(currentSettings));
-            } catch (e) {
-                console.error("Failed to save theme", e);
-            }
-        }
-    };
+    const value = useMemo(() => ({
+        theme,
+        themes: THEMES,
+        changeTheme: (nextTheme) => updateSettings({ theme: nextTheme })
+    }), [theme, updateSettings]);
 
-    return (
-        <ThemeContext.Provider value={{ theme, changeTheme, themes: THEMES }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
-export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used inside ThemeProvider.');
+    }
+    return context;
+};
