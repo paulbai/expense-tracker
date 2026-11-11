@@ -253,7 +253,6 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
         .nav-item:not(.nav-item-active):hover { background: var(--elevated-color); color: var(--text-primary); }
     }
     .nav-item-active { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; }
-    .recharts-legend-item-text { margin-left: 0.25rem; font-size: 0.75rem; color: var(--text-secondary) !important; }
     .nav-item:active, .add-fab:active { transform: scale(0.96); }
 
     .add-fab {
@@ -282,6 +281,9 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
     .expense-card > div:last-child { flex-direction: column; align-items: flex-end; gap: 0.25rem; }
     .expense-card > div:last-child > div { gap: 0.15rem; }
 }
+
+/* Outside @layer so Tailwind keeps it: Recharts adds this class at runtime. */
+.recharts-legend-item-text { margin-left: 0.25rem; font-size: 0.75rem; color: var(--text-secondary) !important; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
