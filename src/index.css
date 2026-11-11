@@ -249,8 +249,11 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
         font-weight: 700;
         transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
     }
-    .nav-item:hover { background: var(--elevated-color); color: var(--text-primary); }
+    @media (hover: hover) {
+        .nav-item:not(.nav-item-active):hover { background: var(--elevated-color); color: var(--text-primary); }
+    }
     .nav-item-active { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; }
+    .recharts-legend-item-text { margin-left: 0.25rem; font-size: 0.75rem; color: var(--text-secondary) !important; }
     .nav-item:active, .add-fab:active { transform: scale(0.96); }
 
     .add-fab {

@@ -169,7 +169,7 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="w-full max-w-lg overflow-y-auto rounded-t-[28px] border border-border bg-surface shadow-2xl sm:max-h-[calc(100vh-2rem)] sm:rounded-[28px]"
+                className="max-h-[92dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] border border-border bg-surface shadow-2xl sm:max-h-[calc(100dvh-2rem)] sm:rounded-[28px]"
             >
                 <header className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
                     <div>

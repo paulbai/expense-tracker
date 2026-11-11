@@ -68,13 +68,7 @@ const PieChartCard = ({ expenses, currency }) => {
                         ))}
                     </Pie>
                     <Tooltip content={<CategoryTooltip currency={currency} />} isAnimationActive={!reducedMotion} />
-                    <Legend
-                        verticalAlign="bottom"
-                        height={36}
-                        formatter={(value) => (
-                            <span className="ml-1 text-xs text-secondary">{value}</span>
-                        )}
-                    />
+                    <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
             </ResponsiveContainer>
         </ChartWrapper>
