@@ -8,6 +8,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Opens the add expense form when someone taps a reminder.
+        importScripts: ['sw-notifications.js']
+      },
       includeAssets: ['logo.png', 'social-card.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'Phae Expense Tracker',

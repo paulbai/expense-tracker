@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { calculateDateTotal, formatCurrency } from '../utils/calculations';
+import { ADD_EXPENSE_PATH } from '../utils/calendarReminder';
 
 const getReminderDelay = (time) => {
     const [hours, minutes] = time.split(':').map(Number);
@@ -26,17 +28,45 @@ export const useNotifications = ({ enabled, time, expenses, currency, onEnabledC
             };
         }
 
+        const lastDate = expenses.reduce((latest, expense) => (expense.date > latest ? expense.date : latest), '');
+        const daysAway = lastDate ? differenceInCalendarDays(new Date(), parseISO(lastDate)) : 0;
+        if (daysAway >= 2) {
+            return {
+                title: `It has been ${daysAway} days`,
+                body: 'Log today’s spending to start a new streak. It takes 30 seconds.'
+            };
+        }
+
         return {
             title: 'How was your spending today?',
             body: 'Take 30 seconds to log your expenses.'
         };
     }, [currency, expenses]);
 
-    const showReminder = useCallback(() => {
+    // Android Chrome only allows notifications through the service worker, and
+    // only service worker notifications can open the add form when tapped.
+    const showReminder = useCallback(async () => {
         if (!supported || window.Notification.permission !== 'granted') return false;
         const { title, body } = notificationContent();
-        new window.Notification(title, { body, icon: '/logo.png', badge: '/logo.png' });
-        return true;
+        const options = {
+            body,
+            icon: '/icon-192.png',
+            badge: '/icon-192.png',
+            tag: 'phae-daily-reminder',
+            data: { url: ADD_EXPENSE_PATH }
+        };
+
+        try {
+            const registration = await navigator.serviceWorker?.getRegistration();
+            if (registration) {
+                await registration.showNotification(title, options);
+                return true;
+            }
+            new window.Notification(title, options);
+            return true;
+        } catch {
+            return false;
+        }
     }, [notificationContent, supported]);
 
     useEffect(() => {

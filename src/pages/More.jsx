@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, Download, Palette, RotateCcw, ShieldCheck, Upload } from 'lucide-react';
+import { Bell, CalendarPlus, Download, Palette, RotateCcw, ShieldCheck, Upload } from 'lucide-react';
 import Button from '../components/atoms/Button';
 import { useToast } from '../components/atoms/Toast';
 import { useExpenses } from '../hooks/useExpenses';
@@ -8,6 +8,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useBackup } from '../hooks/useBackup';
 import { CURRENCIES } from '../utils/constants';
 import { formatExpenseDate } from '../utils/calculations';
+import { downloadReminderIcs } from '../utils/calendarReminder';
 import { getPersistentStorageStatus, isAppleMobileBrowserTab } from '../utils/device';
 import { ImportError, MAX_IMPORT_BYTES, parseExpensesCsv } from '../utils/importExpenses';
 
@@ -45,15 +46,20 @@ const More = ({ notifications, onResetAllData }) => {
         if (result.status === 'unsupported') {
             addToast('This browser does not support notifications.', 'warning');
         } else if (result.success) {
-            addToast('Reminders are enabled while Phae is open.', 'success');
+            addToast('Reminders turned on. They only arrive while Phae is open.', 'success');
         } else {
             addToast('Notification permission was not granted.', 'warning');
         }
     };
 
-    const handleTestNotification = () => {
-        const sent = notifications.testNotification();
-        addToast(sent ? 'Test notification sent.' : 'Allow notifications first, then try again.', sent ? 'success' : 'warning');
+    const handleTestNotification = async () => {
+        const sent = await notifications.testNotification();
+        addToast(sent ? 'Test notification sent.' : 'The test notification could not be shown. Check that notifications are allowed for Phae.', sent ? 'success' : 'warning');
+    };
+
+    const handleAddToCalendar = () => {
+        downloadReminderIcs(settings.notificationTime);
+        addToast('Calendar file downloaded. Open it to add the daily reminder.', 'success');
     };
 
     useEffect(() => {
@@ -162,12 +168,16 @@ const More = ({ notifications, onResetAllData }) => {
                 <div className="section-heading"><Bell size={20} aria-hidden="true" /><h2 id="notifications-heading">Daily reminder</h2></div>
                 <div className="settings-card space-y-5">
                     <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div><h3 className="font-semibold text-primary">Remind me to log expenses</h3><p className="mt-1 text-sm text-secondary">Phae can send a daily reminder when it is open.</p></div>
+                        <div><h3 className="font-semibold text-primary">Remind me to log expenses</h3><p className="mt-1 text-sm text-secondary">Phae can only send this while it’s open in a tab or app. It can’t remind you once it’s closed.</p></div>
                         <label className="toggle-control"><input type="checkbox" aria-label="Remind me to log expenses" checked={settings.notificationEnabled} onChange={handleNotificationChange} /><span aria-hidden="true" /></label>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
                         <div><label htmlFor="notification-time" className="field-label">Reminder time</label><input id="notification-time" type="time" value={settings.notificationTime} onChange={(event) => updateSettings({ notificationTime: event.target.value })} className="form-control mt-2" /></div>
                         <Button variant="secondary" onClick={handleTestNotification} disabled={!settings.notificationEnabled || notifications.permission !== 'granted'}>Send test</Button>
+                    </div>
+                    <div className="border-t border-border pt-5">
+                        <div><h3 className="font-semibold text-primary">Add to your calendar</h3><p className="mt-1 text-sm text-secondary">Your calendar can remind you every day, even when Phae is closed. The event’s link opens a new expense. If you change the reminder time, add the event again and delete the old one.</p></div>
+                        <Button variant="secondary" className="mt-4 gap-2" onClick={handleAddToCalendar}><CalendarPlus size={16} aria-hidden="true" />Add to calendar</Button>
                     </div>
                     {!notifications.supported && <p className="text-sm text-amber-500" role="status">Notifications are not supported in this browser.</p>}
                     {settings.notificationEnabled && notifications.permission === 'denied' && <p className="text-sm text-amber-500" role="status">Notifications are blocked. Enable them in your browser settings to use reminders.</p>}

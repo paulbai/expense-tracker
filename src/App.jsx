@@ -21,7 +21,8 @@ function AppContent() {
     const { settings, resetSettings, updateSettings } = useSettings();
     const [currentPage, setCurrentPage] = useState('dashboard');
     const [listOrigin, setListOrigin] = useState('dashboard');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // Reminders and the calendar event link to /?add=1, which opens the add form.
+    const [isModalOpen, setIsModalOpen] = useState(() => new URLSearchParams(window.location.search).get('add') === '1');
     const [expenseToEdit, setExpenseToEdit] = useState(null);
     const [celebrationStreak, setCelebrationStreak] = useState(null);
     const notifications = useNotifications({
@@ -35,6 +36,22 @@ function AppContent() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [currentPage]);
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('add')) {
+            url.searchParams.delete('add');
+            window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+        }
+
+        const handleMessage = (event) => {
+            if (event.data?.type !== 'phae:add-expense') return;
+            setExpenseToEdit(null);
+            setIsModalOpen(true);
+        };
+        navigator.serviceWorker?.addEventListener('message', handleMessage);
+        return () => navigator.serviceWorker?.removeEventListener('message', handleMessage);
+    }, []);
 
     const openExpenseList = (origin = currentPage) => {
         setListOrigin(origin);
