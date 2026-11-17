@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import StatCard from '../molecules/StatCard';
 import EmptyState from '../molecules/EmptyState';
 import ExpenseCard from '../molecules/ExpenseCard';
+import DataSafetyNotices from '../molecules/DataSafetyNotices';
 import Skeleton from '../atoms/Skeleton';
 import Button from '../atoms/Button';
 import { useExpenses } from '../../hooks/useExpenses';
@@ -87,6 +88,7 @@ const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
                 <EmptyState onAddFirst={onAddExpense} />
             ) : (
                 <>
+                    <DataSafetyNotices />
                     <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Spending summary">
                         <article className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-violet-600 to-pink-600 p-6 text-white shadow-lg shadow-violet-950/30 md:col-span-2">
                             <p className="text-sm font-medium text-white/85">This month’s spending</p>

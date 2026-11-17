@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORIES } from '../utils/constants';
 import { calculateStreak } from '../utils/calculations';
 import { getExpenses, saveExpenses, saveStreakData } from '../utils/storage';
+import { requestPersistentStorage } from '../utils/device';
 
 const ExpensesContext = createContext(null);
 
@@ -38,6 +39,7 @@ export const ExpensesProvider = ({ children }) => {
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const persistenceRequested = useRef(false);
 
     const refreshExpenses = useCallback(async () => {
         try {
@@ -67,6 +69,12 @@ export const ExpensesProvider = ({ children }) => {
         await saveExpenses(nextExpenses);
         setExpenses(nextExpenses);
         setError(null);
+
+        // Once there is data worth keeping, ask the browser not to clear it.
+        if (nextExpenses.length > 0 && !persistenceRequested.current) {
+            persistenceRequested.current = true;
+            requestPersistentStorage();
+        }
 
         // This remains a compatibility cache for existing installations. Expense
         // history is the source of truth, so edits and deletes stay accurate.
@@ -119,6 +127,25 @@ export const ExpensesProvider = ({ children }) => {
         }
     }, [commitExpenses, expenses]);
 
+    // Adds expenses from a backup. Returns how many were added, or null on failure.
+    const importExpenses = useCallback(async (newExpenses) => {
+        const existingIds = new Set(expenses.map((item) => item.id));
+        const valid = newExpenses
+            .map((expense) => ({ ...expense, amount: Number(expense.amount) }))
+            .filter((expense) => !validateExpense(expense) && !existingIds.has(expense.id));
+
+        // Same guard as addExpense: never save over data that failed to load.
+        if (error) return null;
+        if (valid.length === 0) return 0;
+
+        try {
+            await commitExpenses([...expenses, ...valid]);
+            return valid.length;
+        } catch {
+            return null;
+        }
+    }, [commitExpenses, error, expenses]);
+
     const clearExpenses = useCallback(async () => {
         try {
             await commitExpenses([]);
@@ -135,9 +162,10 @@ export const ExpensesProvider = ({ children }) => {
         addExpense,
         updateExpense,
         deleteExpense,
+        importExpenses,
         clearExpenses,
         refreshExpenses
-    }), [addExpense, clearExpenses, deleteExpense, error, expenses, loading, refreshExpenses, updateExpense]);
+    }), [addExpense, clearExpenses, deleteExpense, error, expenses, importExpenses, loading, refreshExpenses, updateExpense]);
 
     return <ExpensesContext.Provider value={value}>{children}</ExpensesContext.Provider>;
 };

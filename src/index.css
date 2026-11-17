@@ -206,6 +206,16 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
     .section-heading { display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-size: 1.125rem; font-weight: 700; }
     .section-heading svg { color: var(--accent-color); }
     .danger-card { border-color: rgba(248, 113, 113, 0.48); }
+    .notice-card {
+        display: flex;
+        gap: 0.875rem;
+        border: 1px solid var(--border-color);
+        border-left: 4px solid var(--accent-color);
+        border-radius: 1rem;
+        background: var(--surface-color);
+        padding: 1rem 1.125rem;
+        box-shadow: var(--neu-shadow-out);
+    }
 
     .toggle-control { position: relative; display: inline-flex; min-width: 3.25rem; min-height: 2.75rem; align-items: center; }
     .toggle-control input { position: absolute; opacity: 0; }

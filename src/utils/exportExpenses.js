@@ -1,5 +1,6 @@
 import { CATEGORIES } from './constants';
-import { formatExpenseDate } from './calculations';
+
+export const CSV_HEADER = ['Date', 'Category', 'Amount', 'Note', 'Created at', 'Updated at', 'ID'];
 
 const escapeCsvValue = (value) => {
     const text = String(value ?? '');
@@ -8,25 +9,27 @@ const escapeCsvValue = (value) => {
     return `"${safeText.replaceAll('"', '""')}"`;
 };
 
-export const createExpensesCsv = (expenses, dateFormat) => {
-    const header = ['Date', 'Category', 'Amount', 'Note', 'Created at', 'Updated at'];
+// Dates are written as yyyy-MM-dd and every row carries its id, so the file
+// can be imported again without guessing the day order or creating duplicates.
+export const createExpensesCsv = (expenses) => {
     const rows = expenses
         .slice()
-        .sort((first, second) => new Date(second.date) - new Date(first.date))
+        .sort((first, second) => second.date.localeCompare(first.date))
         .map((expense) => [
-            formatExpenseDate(expense.date, dateFormat),
+            expense.date,
             CATEGORIES.find((category) => category.id === expense.category)?.label || expense.category,
             Number(expense.amount).toFixed(2),
             expense.note,
             expense.createdAt,
-            expense.updatedAt
+            expense.updatedAt,
+            expense.id
         ]);
 
-    return [header, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n');
+    return [CSV_HEADER, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n');
 };
 
-export const downloadExpensesCsv = (expenses, dateFormat) => {
-    const csv = createExpensesCsv(expenses, dateFormat);
+export const downloadExpensesCsv = (expenses) => {
+    const csv = createExpensesCsv(expenses);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

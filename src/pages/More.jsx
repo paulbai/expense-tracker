@@ -1,12 +1,17 @@
-import { useState } from 'react';
-import { Bell, Download, Palette, RotateCcw, ShieldCheck } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Bell, Download, Palette, RotateCcw, ShieldCheck, Upload } from 'lucide-react';
 import Button from '../components/atoms/Button';
 import { useToast } from '../components/atoms/Toast';
 import { useExpenses } from '../hooks/useExpenses';
 import { useSettings } from '../hooks/useSettings';
 import { useTheme } from '../hooks/useTheme';
+import { useBackup } from '../hooks/useBackup';
 import { CURRENCIES } from '../utils/constants';
-import { downloadExpensesCsv } from '../utils/exportExpenses';
+import { formatExpenseDate } from '../utils/calculations';
+import { getPersistentStorageStatus, isAppleMobileBrowserTab } from '../utils/device';
+import { ImportError, MAX_IMPORT_BYTES, parseExpensesCsv } from '../utils/importExpenses';
+
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
 const THEME_COLORS = {
     dark: '#1a1d29', light: '#e0e5ec', aurora: '#0b1026', ocean: '#0f172a', sunset: '#2a1b1b',
@@ -15,7 +20,11 @@ const THEME_COLORS = {
 
 const More = ({ notifications, onResetAllData }) => {
     const [isResetting, setIsResetting] = useState(false);
-    const { expenses } = useExpenses();
+    const [isImporting, setIsImporting] = useState(false);
+    const [storageStatus, setStorageStatus] = useState('unsupported');
+    const fileInputRef = useRef(null);
+    const { expenses, importExpenses } = useExpenses();
+    const { downloadBackup, lastBackupAt } = useBackup();
     const { settings, updateSettings } = useSettings();
     const { theme, changeTheme, themes } = useTheme();
     const { addToast } = useToast();
@@ -47,13 +56,61 @@ const More = ({ notifications, onResetAllData }) => {
         addToast(sent ? 'Test notification sent.' : 'Allow notifications first, then try again.', sent ? 'success' : 'warning');
     };
 
-    const handleExport = () => {
+    useEffect(() => {
+        let active = true;
+        getPersistentStorageStatus().then((status) => { if (active) setStorageStatus(status); });
+        return () => { active = false; };
+    }, [expenses.length]);
+
+    const handleExport = async () => {
         if (expenses.length === 0) {
             addToast('There are no expenses to export yet.', 'info');
             return;
         }
-        downloadExpensesCsv(expenses, settings.dateFormat);
+        await downloadBackup();
         addToast('Your CSV download has started.', 'success');
+    };
+
+    const handleImportFile = async (event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) return;
+
+        if (file.size > MAX_IMPORT_BYTES) {
+            addToast('That file is larger than 5 MB. Choose a Phae CSV export.', 'error', 5000);
+            return;
+        }
+
+        setIsImporting(true);
+        try {
+            const { expenses: newExpenses, duplicates, invalid } = parseExpensesCsv(await file.text(), {
+                dateFormat: settings.dateFormat,
+                existingExpenses: expenses
+            });
+            const skipped = [
+                duplicates > 0 && `${plural(duplicates, 'expense')} already in Phae`,
+                invalid > 0 && `${plural(invalid, 'row')} that couldn’t be read`
+            ].filter(Boolean).join(' and ');
+
+            if (newExpenses.length === 0) {
+                addToast(skipped ? `Nothing new to import. The file had ${skipped}.` : 'The file has no expenses to import.', 'info', 5000);
+                return;
+            }
+
+            const confirmMessage = `Import ${plural(newExpenses.length, 'expense')}?${skipped ? ` Phae will skip ${skipped}.` : ''} They will be added to the ${plural(expenses.length, 'expense')} already here.`;
+            if (!window.confirm(confirmMessage)) return;
+
+            const added = await importExpenses(newExpenses);
+            if (added === null) {
+                addToast('The expenses could not be imported. Nothing was changed.', 'error', 5000);
+            } else {
+                addToast(`Imported ${plural(added, 'expense')}.`, 'success');
+            }
+        } catch (error) {
+            addToast(error instanceof ImportError ? error.message : 'That file could not be read. Choose a Phae CSV export.', 'error', 5000);
+        } finally {
+            setIsImporting(false);
+        }
     };
 
     const handleReset = async () => {
@@ -134,9 +191,27 @@ const More = ({ notifications, onResetAllData }) => {
 
             <section className="settings-section" aria-labelledby="data-heading">
                 <div className="section-heading"><Download size={20} aria-hidden="true" /><h2 id="data-heading">Your data</h2></div>
+                <p className="text-sm text-secondary" role="status">
+                    {storageStatus === 'persisted'
+                        ? 'Your expenses are stored only in this browser, and the browser has agreed not to clear them on its own.'
+                        : 'Your expenses are stored only in this browser, which may clear them when space runs low or, in Safari, after 7 days without a visit. Download a backup regularly.'}
+                    {isAppleMobileBrowserTab() && ' On iPhone and iPad, adding Phae to your Home Screen stops Safari clearing it.'}
+                </p>
                 <div className="settings-card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div><h3 className="font-semibold text-primary">Export expenses</h3><p className="mt-1 text-sm text-secondary">Download all {expenses.length} expenses as a CSV file.</p></div>
-                    <Button variant="secondary" onClick={handleExport}>Export CSV</Button>
+                    <div>
+                        <h3 className="font-semibold text-primary">Export expenses</h3>
+                        <p className="mt-1 text-sm text-secondary">Download all {plural(expenses.length, 'expense')} as a CSV file. Keep it as a backup, or open it in a spreadsheet.</p>
+                        <p className="mt-1 text-sm text-secondary">{lastBackupAt ? `Last exported ${formatExpenseDate(lastBackupAt.slice(0, 10), settings.dateFormat)}.` : 'Not exported yet.'}</p>
+                    </div>
+                    <Button variant="secondary" onClick={handleExport} className="shrink-0 gap-2"><Download size={17} aria-hidden="true" />Export CSV</Button>
+                </div>
+                <div className="settings-card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 className="font-semibold text-primary">Import expenses</h3>
+                        <p className="mt-1 text-sm text-secondary">Restore a CSV exported from Phae. Expenses already here are skipped, so importing the same file twice is safe.</p>
+                    </div>
+                    <input ref={fileInputRef} type="file" accept=".csv,text/csv" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={handleImportFile} />
+                    <Button variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isImporting} className="shrink-0 gap-2"><Upload size={17} aria-hidden="true" />{isImporting ? 'Importing…' : 'Import CSV'}</Button>
                 </div>
                 <div className="danger-card mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div><h3 className="font-semibold text-primary">Reset Phae</h3><p className="mt-1 text-sm text-secondary">Permanently remove your expenses, preferences, and profile from this browser.</p></div>

@@ -28,8 +28,14 @@ export const DEFAULT_SETTINGS = {
     currency: 'SLE',
     dateFormat: 'dd/MM/yyyy',
     startOfWeek: 'monday',
-    theme: 'dark'
+    theme: 'dark',
+    lastBackupAt: null,
+    lastBackupCount: 0,
+    backupReminderSnoozedAt: 0,
+    homeScreenHintDismissed: false
 };
+
+export const BACKUP_REMINDER_INTERVAL = 50;
 
 export const STORAGE_KEYS = {
     EXPENSES: 'expenses',
