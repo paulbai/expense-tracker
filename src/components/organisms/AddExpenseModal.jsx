@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Calendar, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { subDays } from 'date-fns';
 import Button from '../atoms/Button';
 import Input from '../atoms/Input';
 import CategorySelector from '../molecules/CategorySelector';
@@ -152,7 +153,15 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
         const streakData = calculateStreak(nextExpenses);
         const action = expenseToEdit ? 'updated' : 'added';
 
-        addToast(`Expense ${action}. ${formatExpenseDate(expense.date, settings.dateFormat)} totals ${formatCurrency(dayTotal, settings.currency)}.`, 'success');
+        const total = formatCurrency(dayTotal, settings.currency);
+        const dayLabel = expense.date === toDateKey() ? 'Today’s total' : `Total for ${formatExpenseDate(expense.date, settings.dateFormat)}`;
+        const firstExpense = !expenseToEdit && expenses.length === 0;
+        addToast(
+            firstExpense
+                ? `First expense added. Your dashboard is coming to life. ${dayLabel}: ${total}.`
+                : `Expense ${action}. ${dayLabel}: ${total}.`,
+            'success'
+        );
         onExpenseSaved?.({ expense, action, previousStreak, streakData });
         onClose();
     };
@@ -223,7 +232,7 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="expense-date" className="field-label">Date</label>
-                            <div className="relative mt-2">
+                            <div className="mt-2">
                                 <input
                                     id="expense-date"
                                     name="date"
@@ -233,13 +242,12 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
                                     onChange={(event) => updateField('date', event.target.value)}
                                     aria-invalid={Boolean(errors.date)}
                                     aria-describedby={errors.date ? dateErrorId : undefined}
-                                    className="form-control pr-10"
+                                    className="form-control"
                                 />
-                                <Calendar className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-secondary" size={18} aria-hidden="true" />
                             </div>
                             <div className="mt-2 flex gap-2">
                                 <button type="button" className="text-button" onClick={() => updateField('date', toDateKey())}>Today</button>
-                                <button type="button" className="text-button" onClick={() => updateField('date', toDateKey(new Date(Date.now() - 86400000)))}>Yesterday</button>
+                                <button type="button" className="text-button" onClick={() => updateField('date', toDateKey(subDays(new Date(), 1)))}>Yesterday</button>
                             </div>
                             {errors.date && <p id={dateErrorId} className="field-error" role="alert">{errors.date}</p>}
                         </div>

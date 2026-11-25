@@ -72,16 +72,19 @@ const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
         <div className="space-y-6 pb-28">
             <header className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <img src="/logo.png" width="48" height="48" alt="Phae" className="h-12 w-12 rounded-xl border border-border object-cover" />
+                    <img src="/logo-mark.png" width="48" height="48" alt="Phae" className="h-12 w-12 rounded-xl border border-border object-cover" />
                     <div>
                         <p className="text-sm text-secondary">{getMonthLabel()}</p>
                         <h1 className="text-2xl font-bold tracking-tight text-primary">Hello, {username || 'there'}</h1>
                     </div>
                 </div>
-                <Button onClick={onAddExpense} className="min-h-11 gap-2">
-                    <Plus size={18} aria-hidden="true" />
-                    Add expense
-                </Button>
+                {/* Phones use the round + button in the bottom bar instead. */}
+                <div className="hidden md:block">
+                    <Button onClick={onAddExpense} className="min-h-11 gap-2">
+                        <Plus size={18} aria-hidden="true" />
+                        Add expense
+                    </Button>
+                </div>
             </header>
 
             {expenses.length === 0 ? (
@@ -89,8 +92,8 @@ const Dashboard = ({ onAddExpense, onViewAll, onEditExpense, username }) => {
             ) : (
                 <>
                     <DataSafetyNotices />
-                    <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Spending summary">
-                        <article className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-violet-600 to-pink-600 p-6 text-white shadow-lg shadow-violet-950/30 md:col-span-2">
+                    <section className="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-label="Spending summary">
+                        <article className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-violet-600 to-pink-600 p-6 text-white shadow-lg shadow-violet-950/30 col-span-2">
                             <p className="text-sm font-medium text-white/85">This month’s spending</p>
                             <p className="mt-2 text-4xl font-bold tracking-tight tabular-nums">{formatCurrency(metrics.monthTotal, settings.currency)}</p>
                             <p className="mt-2 text-sm text-white/90">{metrics.count} {metrics.count === 1 ? 'expense' : 'expenses'} logged</p>

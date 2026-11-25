@@ -12,7 +12,7 @@ export default defineConfig({
         // Opens the add expense form when someone taps a reminder.
         importScripts: ['sw-notifications.js']
       },
-      includeAssets: ['logo.png', 'social-card.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon-32.png', 'apple-touch-icon.png', 'logo-mark.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'Phae Expense Tracker',
         short_name: 'Phae',
