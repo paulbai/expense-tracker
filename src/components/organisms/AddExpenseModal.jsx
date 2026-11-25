@@ -197,7 +197,7 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
                     </button>
                 </header>
 
-                <form onSubmit={handleSubmit} className="space-y-6 p-5 sm:p-6">
+                <form onSubmit={handleSubmit} className="sheet-safe-area space-y-6 px-5 pt-5 sm:px-6 sm:pt-6">
                     <div>
                         <label htmlFor="expense-amount" className="field-label">Amount</label>
                         <div className="relative mt-2">
@@ -230,7 +230,7 @@ const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit = null
                     />
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
+                        <div className="min-w-0">
                             <label htmlFor="expense-date" className="field-label">Date</label>
                             <div className="mt-2">
                                 <input

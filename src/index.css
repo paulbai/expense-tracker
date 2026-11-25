@@ -74,6 +74,9 @@ body {
 
 button, input, select { font: inherit; }
 
+/* Fieldsets default to the width of their content, which breaks scrolling rows on phones. */
+fieldset { min-width: 0; }
+
 button:not(:disabled) { cursor: pointer; }
 
 input, select {
@@ -114,7 +117,17 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
         transition: border-color 160ms ease, box-shadow 160ms ease;
     }
 
-    .form-control { min-height: 2.9rem; padding: 0.7rem 0.9rem; }
+    .form-control { min-width: 0; min-height: 2.9rem; padding: 0.7rem 0.9rem; }
+    /* iPhone Safari gives date and time fields a fixed native width and centres
+       the value, so they spill out of narrow cards. Draw them like text fields. */
+    .form-control[type="date"], .form-control[type="time"] {
+        display: block;
+        max-width: 100%;
+        -webkit-appearance: none;
+        appearance: none;
+        text-align: left;
+    }
+    .form-control::-webkit-date-and-time-value { min-height: 1.5em; text-align: left; }
     .amount-input { padding: 1rem 1rem 1rem 4.6rem; font-size: 1.85rem; font-weight: 700; line-height: 1.2; }
     .form-control:focus-visible, .amount-input:focus-visible { border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 34%, transparent), var(--neu-shadow-in); }
 
@@ -294,6 +307,31 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
 
 /* Outside @layer so Tailwind keeps it: Recharts adds this class at runtime. */
 .recharts-legend-item-text { margin-left: 0.25rem; font-size: 0.75rem; color: var(--text-secondary) !important; }
+
+/* Keep content clear of the iPhone status bar, Dynamic Island and home bar.
+   The env() values are 0 on screens without them. Outside @layer so these
+   win over the Tailwind spacing classes on the same elements. */
+.page-safe-area {
+    padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.75rem));
+    padding-bottom: calc(8rem + env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+}
+.onboarding-safe-area {
+    padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.75rem));
+    padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.75rem));
+}
+.nav-safe-area { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+.toast-safe-area { top: calc(1rem + env(safe-area-inset-top)); }
+.sheet-safe-area { padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
+@media (min-width: 640px) {
+    .page-safe-area { padding-left: max(1.5rem, env(safe-area-inset-left)); padding-right: max(1.5rem, env(safe-area-inset-right)); }
+    .nav-safe-area { bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
+    .sheet-safe-area { padding-bottom: 1.5rem; }
+}
+@media (min-width: 1024px) {
+    .page-safe-area { padding-left: 2rem; padding-right: 2rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }

@@ -23,7 +23,7 @@ const Onboarding = ({ onComplete }) => {
     };
 
     return (
-        <main className="min-h-screen bg-bg flex flex-col items-center justify-center p-6 text-center">
+        <main className="onboarding-safe-area min-h-[100dvh] bg-bg flex flex-col items-center justify-center px-6 text-center">
             <div className="max-w-md w-full space-y-8">
                 {/* Logo / Icon */}
                 <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-950/30 mx-auto">

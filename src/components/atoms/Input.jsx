@@ -16,7 +16,7 @@ const Input = ({
     return (
         <div className={`flex flex-col gap-2 ${containerClassName}`}>
             {label && (
-                <label htmlFor={inputId} className="ml-1 text-sm font-medium text-secondary">
+                <label htmlFor={inputId} className="field-label">
                     {label}
                 </label>
             )}
@@ -37,7 +37,7 @@ const Input = ({
                 {...props}
             />
             {error && (
-                <span id={errorId} className="text-xs text-red-500 ml-1" role="alert">{error}</span>
+                <span id={errorId} className="text-xs text-red-500" role="alert">{error}</span>
             )}
         </div>
     );

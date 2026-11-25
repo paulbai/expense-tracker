@@ -7,7 +7,7 @@ const navigationItems = [
 ];
 
 const BottomNavigation = ({ activeTab, onTabChange, onAddExpense }) => (
-    <nav aria-label="Primary navigation" className="fixed bottom-4 left-4 right-4 z-40 mx-auto flex max-w-lg items-center gap-3 sm:bottom-6 sm:left-6 sm:right-6">
+    <nav aria-label="Primary navigation" className="nav-safe-area fixed left-4 right-4 z-40 mx-auto flex max-w-lg items-center gap-3 sm:left-6 sm:right-6">
         <div className="flex h-[72px] flex-1 items-center justify-around rounded-full border border-border bg-surface/95 p-2 shadow-neu backdrop-blur-xl">
             {navigationItems.map((item) => {
                 const isActive = activeTab === item.id;

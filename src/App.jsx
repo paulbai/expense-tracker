@@ -131,7 +131,7 @@ function AppContent() {
     return (
         <div className="min-h-screen bg-bg font-sans text-primary">
             <a className="skip-link" href="#main-content">Skip to content</a>
-            <main id="main-content" className="mx-auto max-w-7xl px-4 py-6 pb-32 sm:px-6 lg:px-8">
+            <main id="main-content" className="page-safe-area mx-auto max-w-7xl">
                 {renderPage()}
             </main>
             <BottomNavigation activeTab={activeTab} onTabChange={setCurrentPage} onAddExpense={() => setIsModalOpen(true)} />

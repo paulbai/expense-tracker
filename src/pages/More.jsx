@@ -167,8 +167,8 @@ const More = ({ notifications, onResetAllData }) => {
             <section className="settings-section" aria-labelledby="notifications-heading">
                 <div className="section-heading"><Bell size={20} aria-hidden="true" /><h2 id="notifications-heading">Daily reminder</h2></div>
                 <div className="settings-card space-y-5">
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div><h3 className="font-semibold text-primary">Remind me to log expenses</h3><p className="mt-1 text-sm text-secondary">Phae can only send this while it’s open in a tab or app. It can’t remind you once it’s closed.</p></div>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1"><h3 className="font-semibold text-primary">Remind me to log expenses</h3><p className="mt-1 text-sm text-secondary">Phae can only send this while it’s open in a tab or app. It can’t remind you once it’s closed.</p></div>
                         <label className="toggle-control"><input type="checkbox" aria-label="Remind me to log expenses" checked={settings.notificationEnabled} onChange={handleNotificationChange} /><span aria-hidden="true" /></label>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
@@ -179,7 +179,7 @@ const More = ({ notifications, onResetAllData }) => {
                         <div><h3 className="font-semibold text-primary">Add to your calendar</h3><p className="mt-1 text-sm text-secondary">Your calendar can remind you every day, even when Phae is closed. The event’s link opens a new expense. If you change the reminder time, add the event again and delete the old one.</p></div>
                         <Button variant="secondary" className="mt-4 gap-2" onClick={handleAddToCalendar}><CalendarPlus size={16} aria-hidden="true" />Add to calendar</Button>
                     </div>
-                    {!notifications.supported && <p className="text-sm text-amber-500" role="status">Notifications are not supported in this browser.</p>}
+                    {!notifications.supported && <p className="text-sm text-amber-500" role="status">{isAppleMobileBrowserTab() ? 'On iPhone and iPad, notifications only work in Phae after you add it to your Home Screen. The calendar reminder works either way.' : 'Notifications are not supported in this browser. The calendar reminder works either way.'}</p>}
                     {settings.notificationEnabled && notifications.permission === 'denied' && <p className="text-sm text-amber-500" role="status">Notifications are blocked. Enable them in your browser settings to use reminders.</p>}
                 </div>
             </section>

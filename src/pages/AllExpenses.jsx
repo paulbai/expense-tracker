@@ -152,12 +152,12 @@ const AllExpenses = ({ onBack, onEditExpense }) => {
 
                 {dateRange === 'custom' && (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                        <div><label htmlFor="custom-start" className="field-label">From</label><input id="custom-start" type="date" value={customStart} onChange={(event) => setCustomStart(event.target.value)} className="form-control mt-1" /></div>
-                        <div><label htmlFor="custom-end" className="field-label">To</label><input id="custom-end" type="date" value={customEnd} onChange={(event) => setCustomEnd(event.target.value)} className="form-control mt-1" /></div>
+                        <div className="min-w-0"><label htmlFor="custom-start" className="field-label">From</label><input id="custom-start" type="date" value={customStart} onChange={(event) => setCustomStart(event.target.value)} className="form-control mt-1" /></div>
+                        <div className="min-w-0"><label htmlFor="custom-end" className="field-label">To</label><input id="custom-end" type="date" value={customEnd} onChange={(event) => setCustomEnd(event.target.value)} className="form-control mt-1" /></div>
                     </div>
                 )}
 
-                <fieldset className="mt-4">
+                <fieldset className="mt-4 min-w-0">
                     <legend className="field-label">Categories</legend>
                     <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
                         <button type="button" onClick={() => setSelectedCategories([])} className={`filter-pill ${selectedCategories.length === 0 ? 'filter-pill-active' : ''}`} aria-pressed={selectedCategories.length === 0}>All categories</button>
