@@ -336,3 +336,58 @@ input::placeholder { color: var(--text-secondary); opacity: 0.8; }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Welcome screen: one question, the answer typed at headline size. */
+@layer components {
+    .onboarding { display: flex; justify-content: center; padding-left: max(1.5rem, env(safe-area-inset-left)); padding-right: max(1.5rem, env(safe-area-inset-right)); }
+    .onboarding-form { display: flex; width: 100%; max-width: 26rem; min-height: calc(100dvh - 3rem); flex-direction: column; }
+    .onboarding-brand { display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; }
+    .onboarding-body { display: flex; flex: 1; flex-direction: column; justify-content: center; padding: 3rem 0 2rem; }
+    .onboarding-title { margin: 0; color: var(--text-primary); font-size: 2rem; font-weight: 700; line-height: 1.12; letter-spacing: -0.03em; text-wrap: balance; }
+    .onboarding-title label { cursor: text; }
+    .onboarding-input {
+        width: 100%;
+        margin-top: 2rem;
+        border: 0;
+        border-bottom: 2px solid var(--border-color);
+        border-radius: 0;
+        background: transparent;
+        color: var(--accent-color);
+        font-size: 1.75rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        padding: 0.25rem 0 0.5rem;
+        outline: none;
+        transition: border-color 160ms ease;
+    }
+    .onboarding-input::placeholder { color: var(--text-secondary); opacity: 0.55; }
+    .onboarding-input:focus-visible { border-bottom-color: var(--accent-color); }
+    .onboarding-input[aria-invalid="true"] { border-bottom-color: #f87171; }
+    .onboarding-note, .onboarding-error { margin: 0.875rem 0 0; font-size: 0.9375rem; line-height: 1.6; }
+    .onboarding-note { color: var(--text-secondary); }
+    .onboarding-error { color: #f87171; }
+    .onboarding-submit {
+        width: 100%;
+        min-height: 3.25rem;
+        border: 0;
+        border-radius: 1rem;
+        background: var(--accent-color);
+        color: var(--bg-color);
+        font-size: 1.0625rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 160ms ease, transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .onboarding-submit:hover { background: color-mix(in srgb, var(--accent-color) 88%, var(--text-primary)); }
+    .onboarding-submit:active { transform: scale(0.98); }
+    .onboarding-submit:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 3px; }
+    .onboarding-submit:disabled { cursor: progress; opacity: 0.7; }
+
+    @media (min-width: 768px) {
+        .onboarding { align-items: center; }
+        .onboarding-form { min-height: 0; max-width: 28rem; }
+        .onboarding-body { flex: none; padding: 4rem 0 2.5rem; }
+        .onboarding-title { font-size: 2.5rem; }
+        .onboarding-input { font-size: 2rem; }
+    }
+}
